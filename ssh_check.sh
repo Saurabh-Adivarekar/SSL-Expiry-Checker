@@ -12,13 +12,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: main  # Change this to the default branch of your repository
 
-      - name: Set up environment
-        run: |
-          chmod +x ssl_check.sh
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Use Node.js 16
 
       - name: SSL Expiry Check
         run: |
-          ./ssl_check.sh ${{ secrets.SLACK_WEBHOOK_URL }}
+          SSL-Expiry-Checker/ssl_check.sh
         env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DOMAINS: ${{ secrets.DOMAINS }}
