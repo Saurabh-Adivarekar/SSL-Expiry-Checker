@@ -34,7 +34,9 @@ jobs:
         if: success()
         uses: rtCamp/action-slack-notify@v2
         with:
-          status: "Success"
-          text: ${{ steps.run_script.outputs.ssl_expiry_alerts }}
+          entryPoint: "rtCamp/action-slack-notify@v2"
+          args: |
+            --status "Success"
+            --args ${{ steps.run_script.outputs.ssl_expiry_alerts }}
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
