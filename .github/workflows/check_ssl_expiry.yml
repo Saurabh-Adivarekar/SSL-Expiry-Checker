@@ -1,0 +1,44 @@
+name: SSL Expiry Checker
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  check_ssl_expiry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install cryptography pyOpenSSL
+
+      - name: Run SSL Expiry Checker
+        run: |
+          DOMAINS="${{ secrets.DOMAINS }}"
+          python .github/scripts/check_ssl_expiry.py "$DOMAINS"
+
+
+      - name: Notify in Slack
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          status: "Success"
+          text: |
+            SSL Expiry Alert
+            * Domain : ${{ steps.run_script.outputs.domain_name }}
+            * Warning : The SSL certificate for ${{ steps.run_script.outputs.domain_name }} will expire in ${{ steps.run_script.outputs.days_to_expire }} days.
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+
