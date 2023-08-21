@@ -21,11 +21,6 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'  # Specify Node.js version 16
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -44,16 +39,9 @@ jobs:
           SLACK_WEBHOOK="${{ secrets.SLACK_WEBHOOK }}"
           SLACK_MESSAGE=$(cat ssl_alerts.txt)
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Send Slack Notification
-        if: success()
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          entryPoint: "notify"
-          args: |
-            --status Success
-            --text ${{ env.SLACK_MESSAGE }}
+          echo "SSL Expiry Alert"
+          echo "$SLACK_MESSAGE"
+
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
