@@ -12,11 +12,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
+          node-version: 16  # Specify Node.js version 16 here
 
       - name: Install dependencies
         run: |
@@ -30,6 +34,9 @@ jobs:
           SSL_ALERTS=$(python .github/scripts/check_ssl_expiry.py "$DOMAINS")
           echo "SSL_ALERTS=$SSL_ALERTS" >> $GITHUB_ENV
 
+      - name: Save SSL Alerts to Environment File
+        run: echo "$SSL_ALERTS" >> ssl_alerts.env
+
       - name: Notify in Slack
         if: success()
         uses: rtCamp/action-slack-notify@v2
@@ -37,6 +44,6 @@ jobs:
           entryPoint: "rtCamp/action-slack-notify@v2"
           args: |
             --status "Success"
-            --args ${{ env.SSL_ALERTS }}
+            --args "$(cat ssl_alerts.env)"
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
