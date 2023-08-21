@@ -22,7 +22,7 @@ jobs:
 
       - name: SSL Expiry Check
         run: |
-          SSL-Expiry-Checker/ssl_check.sh
+          ./ssl_check.sh
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DOMAINS: ${{ secrets.DOMAINS }}
