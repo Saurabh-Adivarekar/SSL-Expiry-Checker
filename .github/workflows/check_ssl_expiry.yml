@@ -39,6 +39,6 @@ jobs:
             * Domain : ${{ steps.run_script.outputs.domain_name }}
             * Warning : The SSL certificate for ${{ steps.run_script.outputs.domain_name }} will expire in ${{ steps.run_script.outputs.days_to_expire }} days.
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
 
