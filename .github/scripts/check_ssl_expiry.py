@@ -1,8 +1,7 @@
-import os
-import sys
 import ssl
 import socket
 import datetime
+import os
 
 def get_remaining_days(expiry_date):
     current_date = datetime.datetime.now()
@@ -10,9 +9,9 @@ def get_remaining_days(expiry_date):
     return remaining_days
 
 def main():
-    domains = sys.argv[1].split(",")
-    alerts = []  # To store alerts for SSL expiry
-    
+    domains = os.environ.get("DOMAINS", "").split(",")
+    alerts = []
+
     for domain in domains:
         try:
             ctx = ssl.create_default_context()
@@ -21,7 +20,7 @@ def main():
                 cert = s.getpeercert()
                 expiry_date = datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z")
                 days_to_expire = get_remaining_days(expiry_date)
-                
+
                 if days_to_expire <= 30:
                     alert_message = (
                         f"SSL Expiry Alert\n"
@@ -31,9 +30,10 @@ def main():
                     alerts.append(alert_message)
         except Exception as e:
             print(f"Error checking SSL for {domain}: {e}")
-    
+
     # Print alerts to be captured as output
-    print("\n".join(alerts))
+    for alert in alerts:
+        print(alert)
 
 if __name__ == "__main__":
     main()
