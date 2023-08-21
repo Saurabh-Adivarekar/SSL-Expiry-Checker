@@ -28,7 +28,7 @@ jobs:
         run: |
           DOMAINS="${{ secrets.DOMAINS }}"
           SSL_ALERTS=$(python .github/scripts/check_ssl_expiry.py "$DOMAINS")
-          echo "::set-output name=ssl_expiry_alerts::$SSL_ALERTS"
+          echo "SSL_ALERTS=$SSL_ALERTS" >> $GITHUB_ENV
 
       - name: Notify in Slack
         if: success()
@@ -37,6 +37,6 @@ jobs:
           entryPoint: "rtCamp/action-slack-notify@v2"
           args: |
             --status "Success"
-            --args ${{ steps.run_script.outputs.ssl_expiry_alerts }}
+            --args ${{ env.SSL_ALERTS }}
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
