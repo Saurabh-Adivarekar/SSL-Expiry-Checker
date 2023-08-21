@@ -9,7 +9,12 @@ def get_remaining_days(expiry_date):
     return remaining_days
 
 def main():
-    domains = os.environ.get("DOMAINS", "").split(",")
+    domains_secret = os.environ.get("DOMAINS")
+    if not domains_secret:
+        print("DOMAINS secret not set.")
+        return
+
+    domains = domains_secret.split(",")
     alerts = []
 
     for domain in domains:
