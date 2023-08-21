@@ -40,11 +40,20 @@ jobs:
 
       - name: Notify in Slack
         if: success()
+        run: |
+          SLACK_WEBHOOK="${{ secrets.SLACK_WEBHOOK }}"
+          SLACK_MESSAGE=$(cat ssl_alerts.txt)
+          echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Send Slack Notification
+        if: success()
         uses: rtCamp/action-slack-notify@v2
         with:
-          entryPoint: "rtCamp/action-slack-notify@v2"
+          entryPoint: "notify"
           args: |
-            --entryPoint "notify"
-            --args "--status Success --text $(cat ssl_alerts.txt)"
+            --status Success
+            --text ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
