@@ -33,8 +33,7 @@ def main():
             print(f"Error checking SSL for {domain}: {e}")
     
     # Print alerts to be captured as output
-    for alert in alerts:
-        print(alert)
+    print("\n".join(alerts))
 
 if __name__ == "__main__":
     main()
