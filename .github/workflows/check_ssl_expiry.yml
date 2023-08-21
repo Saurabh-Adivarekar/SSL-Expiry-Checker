@@ -24,21 +24,17 @@ jobs:
           pip install cryptography pyOpenSSL
 
       - name: Run SSL Expiry Checker
+        id: run_script
         run: |
           DOMAINS="${{ secrets.DOMAINS }}"
-          python .github/scripts/check_ssl_expiry.py "$DOMAINS"
-
+          SSL_ALERTS=$(python .github/scripts/check_ssl_expiry.py "$DOMAINS")
+          echo "::set-output name=ssl_expiry_alerts::$SSL_ALERTS"
 
       - name: Notify in Slack
         if: success()
         uses: rtCamp/action-slack-notify@v2
         with:
           status: "Success"
-          text: |
-            SSL Expiry Alert
-            * Domain : ${{ steps.run_script.outputs.domain_name }}
-            * Warning : The SSL certificate for ${{ steps.run_script.outputs.domain_name }} will expire in ${{ steps.run_script.outputs.days_to_expire }} days.
+          text: ${{ steps.run_script.outputs.ssl_expiry_alerts }}
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-
-
