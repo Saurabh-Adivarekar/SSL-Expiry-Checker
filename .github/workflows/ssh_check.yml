@@ -14,11 +14,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up environment
-        run: |
-          chmod +x ssl_check.sh
+        run: chmod +x ssl_check.sh
 
       - name: SSL Expiry Check
-        run: |
-          ./ssl_check.sh ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: ./ssl_check.sh ${{ secrets.SLACK_WEBHOOK_URL }}
         env:
           DOMAINS: ${{ secrets.DOMAINS }}
