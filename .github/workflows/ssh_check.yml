@@ -15,7 +15,7 @@ jobs:
 
       - name: SSL Expiry Check
         run: |
-          /c/GitFlow-SSL/SSL/SSL-Expiry-Checker/ssl_check.sh
+          /SSL-Expiry-Checker/ssl_check.sh
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DOMAINS: ${{ secrets.DOMAINS }}
