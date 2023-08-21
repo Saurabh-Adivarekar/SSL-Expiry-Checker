@@ -1,29 +1,14 @@
-#new
-name: SSL Expiry Check
+#!/bin/bash
 
-on:
-  schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
+WEBHOOK_URL="$SLACK_WEBHOOK_URL"
 
-jobs:
-  check_ssl_expiry:
-    runs-on: ubuntu-latest
+while IFS= read -r DOMAIN; do
+    EXPIRY_DATE=$(echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN":443 2>/dev/null | openssl x509 -noout -enddate | cut -d "=" -f 2)
+    EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s)
+    CURRENT_TIMESTAMP=$(date +%s)
+    DAYS_LEFT=$(( ($EXPIRY_TIMESTAMP - $CURRENT_TIMESTAMP) / 86400 ))
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: main  # Change this to the default branch of your repository
+    ALERT_MESSAGE="SSL Expiry Alert\n   * Domain : $DOMAIN\n   * Warning : The SSL certificate for $DOMAIN will expire in $DAYS_LEFT days."
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'  # Use Node.js 16
-
-      - name: SSL Expiry Check
-        run: |
-          ./ssl_check.sh
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          DOMAINS: ${{ secrets.DOMAINS }}
+    curl -X POST -H "Content-type: application/json" --data "{\"text\":\"$ALERT_MESSAGE\"}" "$WEBHOOK_URL"
+done <<< "$DOMAINS"
