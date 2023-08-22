@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run script file
         run: |
-           chmod +x ./scripts/ssh_check.sh
-           ./scripts/ssh_check.sh
+           chmod +x ./scripts/ssh_check.py
+           ./scripts/ssh_check.py
         shell: bash
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
