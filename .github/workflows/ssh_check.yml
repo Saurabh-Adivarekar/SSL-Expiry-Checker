@@ -6,20 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  check_ssl_expiry:
-    runs-on: ubuntu-latest
+  run_tests:
+    runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16  # Use Node.js 16
-
-      - name: SSL Expiry Check
-        run: ./scripts/ssl_check.sh
+      - uses: actions/checkout@v3
+      - name: Run script file
+        run: |
+           chmod +x ./public/scripts/test.sh
+           ./public/scripts/test.sh
+        shell: bash
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DOMAINS_SECRET: ${{ secrets.DOMAINS }}
+
+
+    
+    
+      
+      
