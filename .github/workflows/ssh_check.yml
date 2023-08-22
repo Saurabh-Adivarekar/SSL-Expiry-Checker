@@ -1,32 +1,24 @@
 name: SSL Expiry Check
-
 on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
-
 jobs:
   run_tests:
     runs-on: ubuntu-20.04
-
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.8
       - name: Run script file
         run: |
-           chmod +x ./scripts/ssh_check.py
-           ./scripts/ssh_check.py
+           chmod +x ./scripts/test.sh
+           ./scripts/test.sh
+           chmod +x ./scripts/ssh_check.sh
+           ./scripts/ssh_check.sh
         shell: bash
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DOMAINS_SECRET: ${{ secrets.DOMAINS }}
 
-      
-
-    
     
       
       
