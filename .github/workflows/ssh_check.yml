@@ -19,7 +19,7 @@ jobs:
           node-version: 16  # Use Node.js 16
 
       - name: Set execute permission for script
-        run: chmod +x ssl_check.sh
+        run: chmod +x ./ssl_check.sh
 
       - name: SSL Expiry Check
         run: ./ssl_check.sh
